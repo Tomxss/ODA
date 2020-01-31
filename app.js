@@ -1,5 +1,5 @@
 const express = require('express');
-const handle = require('express-handlebars');
+const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
@@ -21,14 +21,14 @@ app.use(bodyParser.json());
 
 // Connect to mlab MongoDb
 mongoose.connect(Keys.MongoDB, { useUnifiedTopology: true, useNewUrlParser: true }).then(() => {
-    debug(chalk.rgb(255, 213, 5)('Connected to MongoDB.'));
+    debug(`Step 2: ` + chalk.rgb(255, 213, 5)(`Connected to MongoDB.`));
 }).catch((err) => {
     debug(err);
 })
 
 // setup view engine
-app.engine('handlebars', handle({defaultLayout:'main'}));
-app.set('view engine', 'handlebars');
+app.use(expressLayouts);
+app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
     res.render('home',{ 
@@ -50,8 +50,32 @@ app.get('/contact', (req, res) => {
 
 app.post('/contactUs', (req, res) => {
     debug(req.body);
+    const newMessage = {
+        fullname,
+        email,
+        message,
+        date
+    } = req.body
+    new Message(newMessage).save((err, message) => {
+        if (err) {
+            throw err;
+        } else {
+            Message.find({}).then((messages) => {
+                if (messages) {
+                    res.render('newmessage', {
+                        title:'Sent',
+                        messages:messages
+                    });
+                }else {
+                    res.render('noMessage', {
+                        title: 'Not Found'
+                    });
+                }
+            })
+        }
+    })
 });
 
 app.listen(port, () => {
-    debug(chalk.rgb(255, 213, 5)(`Server is running optimally on port: ${chalk.magenta(port)}`));
+    debug(`Step 1: ` + chalk.rgb(255, 213, 5)(`Server is running optimally on port: ${chalk.magenta(port)}`));
 });
