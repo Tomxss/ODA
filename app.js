@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 // Connect to mlab MongoDb
 mongoose.connect(Keys.MongoDB, { useUnifiedTopology: true, useNewUrlParser: true }).then(() => {
-    debug(chalk.rgb(255, 213, 5)('Connected to MongoDB.'));
+    debug(`Step 2: ` + chalk.rgb(255, 213, 5)('Connected to MongoDB.'));
 }).catch((err) => {
     debug(err);
 })
@@ -50,8 +50,23 @@ app.get('/contact', (req, res) => {
 
 app.post('/contactUs', (req, res) => {
     debug(req.body);
+    const newMessage = {
+        fullname: req.body.fullname,
+        email: req.body.email,
+        message: req.body.message,
+        date: new Date()
+    }
+    new Message(newMessage).save((err, message) => {
+        if (err){
+            throw err;
+        }else {
+            res.render('newmessage', {
+                title: 'sent'
+            });
+        }
+    })
 });
 
 app.listen(port, () => {
-    debug(chalk.rgb(255, 213, 5)(`Server is running optimally on port: ${chalk.magenta(port)}`));
+    debug(`Step 1: ` + chalk.rgb(255, 213, 5)(`Server is running optimally on port: ${chalk.magenta(port)}`));
 });
