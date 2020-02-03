@@ -1,5 +1,5 @@
 const express = require('express');
-const handle = require('express-handlebars');
+const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
@@ -21,14 +21,18 @@ app.use(bodyParser.json());
 
 // Connect to mlab MongoDb
 mongoose.connect(Keys.MongoDB, { useUnifiedTopology: true, useNewUrlParser: true }).then(() => {
+<<<<<<< HEAD
     debug(`Step 2: ` + chalk.rgb(255, 213, 5)('Connected to MongoDB.'));
+=======
+    debug(`Step 2: ` + chalk.rgb(255, 213, 5)(`Connected to MongoDB.`));
+>>>>>>> bf782a9a63072ae01e25bd0a6a6eeb93b4d157e0
 }).catch((err) => {
     debug(err);
 })
 
 // setup view engine
-app.engine('handlebars', handle({defaultLayout:'main'}));
-app.set('view engine', 'handlebars');
+app.use(expressLayouts);
+app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
     res.render('home',{ 
