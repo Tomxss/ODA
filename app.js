@@ -60,8 +60,14 @@ app.post('/contactUs', (req, res) => {
         if (err){
             throw err;
         }else {
-            res.render('newmessage', {
-                title: 'sent'
+            Message.find({}).then((messages) => {
+                if (messages) {
+                    res.render('newMessage', {title: 'Sent', messages:messages}, );
+                } else {
+                    res.render('noMessage', {
+                        title: 'Not Found'
+                    })
+                }
             });
         }
     })
