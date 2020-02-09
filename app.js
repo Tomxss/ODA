@@ -2,9 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const handle = require('express-handlebars');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const cookieParser = require ('cookie-parser');
+const session = require('express-session');
 
 // Load models
 const Message = require('./models/message');
+const User = require('./models/user');
 
 // Load keys file
 const Keys = require('./config/keys')
@@ -18,6 +22,15 @@ const app = express();
 // body parser middleware
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
+// config for authentiaction
+app.use(cookieParser());
+app.use(session({
+    secret: 'mySecret',
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Connect to mlab MongoDb
 mongoose.connect(Keys.MongoDB, { useUnifiedTopology: true, useNewUrlParser: true }).then(() => {
