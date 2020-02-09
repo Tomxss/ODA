@@ -19,9 +19,11 @@ const chalk = require('chalk');
 const port = process.env.PORT || 3000;
 
 const app = express();
+
 // body parser middleware
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
+
 // config for authentiaction
 app.use(cookieParser());
 app.use(session({
